@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "subscriptionName": {
+      "value": "my-subscription"
+    },
+    "billingScopeId": {
+      "value": "/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}"
+    },
+    "scope": {
+      "value": "my-resource-group"
+    },
+    "roleDefinitionName": {
+      "value": "Reader"
+    },
+    "principalId": {
+      "value": "00000000-0000-0000-0000-000000000000"
+    },
+    "location": {
+      "value": "West US"
+    },
+    "vnetName": {
+      "value": "my-vnet"
+    },
+    "addressSpace": {
+      "value": [
+        "10.0.0.0/16"
+      ]
+    },
+    "peeringName": {
+      "value": "my-peering"
+    },
+    "remoteVnetId": {
+      "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/my-remote-rg/providers/Microsoft.Network/virtualNetworks/my-remote-vnet"
+    }
+  }
+}
