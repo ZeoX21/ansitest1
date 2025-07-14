@@ -2,34 +2,72 @@
 - hosts: all
   gather_facts: yes
   tasks:
-    - name: Update packages on Debian/Ubuntu
-      apt:
-        update_cache: yes
-        upgrade: dist
-      register: apt_result
-      when: ansible_os_family == "Debian"
+    - name: Check Azure Arc agent version on Linux
+      command: "azcmagent version"
+      register: linux_arc_version_before
+      when: ansible_os_family != "Windows"
 
-    - name: Update packages on RedHat/CentOS
-      yum:
-        name: '*'
-        state: latest
-      register: yum_result
-      when: ansible_os_family == "RedHat"
-
-    - name: Install updates on Windows
-      win_updates:
-        category_names:
-          - SecurityUpdates
-          - CriticalUpdates
-        reboot: yes
+    - name: Check Azure Arc agent version on Windows
+      win_command: "C:\\Program Files\\AzureConnectedMachineAgent\\azcmagent.exe version"
+      register: windows_arc_version_before
       when: ansible_os_family == "Windows"
 
-    - name: Reboot the machine if required
-      reboot:
-        msg: "Rebooting machine after updates"
-        connect_timeout: 5
-        reboot_timeout: 600
-        pre_reboot_delay: 0
-        post_reboot_delay: 30
-        test_command: whoami
-      when: ansible_os_family != "Windows" and (apt_result is changed or yum_result is changed)
+    - name: Save Linux version to file
+      lineinfile:
+        path: "/tmp/beforeupdate"
+        line: "{{ inventory_hostname }} - {{ linux_arc_version_before.stdout }}"
+        create: yes
+      delegate_to: localhost
+      when: ansible_os_family != "Windows"
+
+    - name: Save Windows version to file
+      lineinfile:
+        path: "/tmp/beforeupdate"
+        line: "{{ inventory_hostname }} - {{ windows_arc_version_before.stdout }}"
+        create: yes
+      delegate_to: localhost
+      when: ansible_os_family == "Windows"
+
+    - name: Update Azure Arc agent on Debian/Ubuntu
+      apt:
+        name: azcmagent
+        state: latest
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Update Azure Arc agent on RedHat/CentOS
+      yum:
+        name: azcmagent
+        state: latest
+      when: ansible_os_family == "RedHat"
+
+    - name: Update Azure Arc agent on Windows
+      win_shell: |
+        "C:\\Program Files\\AzureConnectedMachineAgent\\azcmagent.exe" upgrade
+      when: ansible_os_family == "Windows"
+
+    - name: Check Azure Arc agent version on Linux after update
+      command: "azcmagent version"
+      register: linux_arc_version_after
+      when: ansible_os_family != "Windows"
+
+    - name: Check Azure Arc agent version on Windows after update
+      win_command: "C:\\Program Files\\AzureConnectedMachineAgent\\azcmagent.exe version"
+      register: windows_arc_version_after
+      when: ansible_os_family == "Windows"
+
+    - name: Save Linux version to file after update
+      lineinfile:
+        path: "/tmp/afterupdate"
+        line: "{{ inventory_hostname }} - {{ linux_arc_version_after.stdout }}"
+        create: yes
+      delegate_to: localhost
+      when: ansible_os_family != "Windows"
+
+    - name: Save Windows version to file after update
+      lineinfile:
+        path: "/tmp/afterupdate"
+        line: "{{ inventory_hostname }} - {{ windows_arc_version_after.stdout }}"
+        create: yes
+      delegate_to: localhost
+      when: ansible_os_family == "Windows"
