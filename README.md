@@ -27,7 +27,7 @@ This repository contains Terraform and Bicep scripts to create Azure resources, 
     - `billing_scope_id`: The billing scope for the new subscription. This is typically in the format `/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}`.
     - `scope`: The scope at which the role assignment is created. This can be a subscription, resource group, or resource.
     - `role_definition_name`: The name of the role to assign (e.g., "Reader", "Contributor").
-    - `principal_id`: The object ID of the user, group, or service principal to assign the role to.
+    - `principal_id`: The object ID of the user, group, or service principal to assign the role to. You can get this from the Azure portal or by using the Azure CLI.
     - `resource_group_name`: The name of the resource group to create.
     - `location`: The Azure region where the resources will be created (e.g., "West US", "East US").
     - `vnet_name`: The name of the virtual network to create.
@@ -60,7 +60,7 @@ This repository contains Terraform and Bicep scripts to create Azure resources, 
     - `billingScopeId`: The billing scope for the new subscription. This is typically in the format `/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}`.
     - `scope`: The name of the resource group to which the role assignment applies.
     - `roleDefinitionName`: The name of the role to assign (e.g., "Reader", "Contributor").
-    - `principalId`: The object ID of the user, group, or service principal to assign the role to.
+    - `principalId`: The object ID of the user, group, or service principal to assign the role to. You can get this from the Azure portal or by using the Azure CLI.
     - `location`: The Azure region where the resources will be created (e.g., "West US", "East US").
     - `vnetName`: The name of the virtual network to create.
     - `addressSpace`: An array of address prefixes for the virtual network (e.g., `["10.0.0.0/16"]`).
